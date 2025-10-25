@@ -1,0 +1,31 @@
+package org.example
+
+import pt.isel.canvas.RED
+
+
+val RACKET_CENTRAL_ZONE = 40
+val RACKET_EDGE_ZONE = 10
+val RACKET_MIDDLE_ZONE = 15
+val RACKET_WIDTH = RACKET_CENTRAL_ZONE + RACKET_MIDDLE_ZONE + RACKET_EDGE_ZONE
+val RACKET_HEIGHT = 10
+val RACKET_COLOR = RED
+val RACKET_Y_CORD = 550
+val RACKET_STARTING_POS_X = (WIDTH / 2) - (RACKET_WIDTH / 2)
+val RACKET_X_CORD = RACKET_STARTING_POS_X
+val RACKET_INVALID_POS_OFFSET = RACKET_WIDTH
+
+data class Racket(val x: Int = RACKET_X_CORD, val y: Int = RACKET_Y_CORD)
+
+fun drawPaddle(paddle: Racket) {
+    arena.drawRect(
+        x = paddle.x,
+        y = RACKET_Y_CORD,
+        width = RACKET_WIDTH,
+        height = RACKET_HEIGHT,
+        color = RACKET_COLOR
+    )
+}
+
+fun newPaddle(xCord: Int): Racket {
+    return Racket(if (xCord <= WIDTH - RACKET_INVALID_POS_OFFSET) xCord else xCord - RACKET_INVALID_POS_OFFSET)
+}
