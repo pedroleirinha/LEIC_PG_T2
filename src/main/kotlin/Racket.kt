@@ -12,7 +12,6 @@ val RACKET_COLOR = RED
 val RACKET_Y_CORD = 550
 val RACKET_STARTING_POS_X = (WIDTH / 2) - (RACKET_WIDTH / 2)
 val RACKET_X_CORD = RACKET_STARTING_POS_X
-val RACKET_INVALID_POS_OFFSET = RACKET_WIDTH
 
 data class Racket(val x: Int = RACKET_X_CORD, val y: Int = RACKET_Y_CORD)
 
@@ -27,5 +26,6 @@ fun drawPaddle(paddle: Racket) {
 }
 
 fun newPaddle(xCord: Int): Racket {
-    return Racket(if (xCord <= WIDTH - RACKET_INVALID_POS_OFFSET) xCord else xCord - RACKET_INVALID_POS_OFFSET)
+    val racketXCordCorrected = if (xCord + RACKET_WIDTH <= WIDTH) xCord else WIDTH - RACKET_WIDTH
+    return Racket(racketXCordCorrected)
 }
