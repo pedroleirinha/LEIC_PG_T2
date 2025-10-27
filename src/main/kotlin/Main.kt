@@ -3,12 +3,12 @@ package org.example
 import pt.isel.canvas.*
 import kotlin.math.sign
 
-val WIDTH = 400
-val HEIGHT = 600
-val BACKGROUND_COLOR = BLACK
+const val WIDTH = 400
+const val HEIGHT = 600
+const val BACKGROUND_COLOR = BLACK
 
-val CANVAS_INVALID_POS_OFFSET = 10
-val TIME_TICK_MLS = 10
+const val CANVAS_INVALID_POS_OFFSET = 10
+const val TIME_TICK_MLS = 10
 
 enum class Collision {
     HORIZONTAL,
@@ -54,11 +54,10 @@ fun main() {
 
     onFinish {
         print("FINISH")
-
     }
 }
 
-fun checkBallAfterColisionWithArea(ball: Ball, area: Area): Collision {
+fun checkBallColisionWithArea(ball: Ball, area: Area): Collision {
     val offset = 10
     if (ball.x <= offset || ball.x >= area.width - offset) {
         return Collision.HORIZONTAL
@@ -100,14 +99,14 @@ fun checkAllBallsPossibleCollision(balls: List<Ball>, area: Area, racket: Racket
 
 fun checkAndUpdateBallMovementAfterCollision(ball: Ball, area: Area, racket: Racket): Ball {
     val racketCollision = checkBallCollisionWithRacket(ball, racket)
-    val areaCollision = checkBallAfterColisionWithArea(ball, area)
+    val areaCollision = checkBallColisionWithArea(ball, area)
 
-    if (racketCollision != Collision.NONE) {
-        return updateBallDeltasAfterColision(ball, racketCollision)
+    return if (racketCollision != Collision.NONE) {
+        updateBallDeltasAfterColision(ball, racketCollision)
     } else if (areaCollision != Collision.NONE) {
-        return updateBallDeltasAfterColision(ball, areaCollision)
+        updateBallDeltasAfterColision(ball, areaCollision)
     } else {
-        return ball
+        ball
     }
 }
 
