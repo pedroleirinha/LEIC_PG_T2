@@ -32,7 +32,7 @@ fun main() {
         drawPaddle(paddle)
 
         arena.onTimeProgress(BALL_GENERATOR_PERIOD) {
-            val newBalls: List<Ball> = game.balls + generateRandomBall();
+            val newBalls: List<Ball> = game.balls + generateRandomBall()
             game = game.copy(balls = newBalls)
         }
 
@@ -59,7 +59,7 @@ fun main() {
 }
 
 fun checkBallAfterColisionWithArea(ball: Ball, area: Area): Collision {
-    val offset = 10;
+    val offset = 10
     if (ball.x <= offset || ball.x >= area.width - offset) {
         return Collision.HORIZONTAL
     } else if (ball.y <= offset || ball.y >= area.height - offset) {
@@ -69,10 +69,10 @@ fun checkBallAfterColisionWithArea(ball: Ball, area: Area): Collision {
 }
 
 fun checkBallCollisionWithRacket(ball: Ball, racket: Racket): Collision {
-    val offset = 10;
+    val offset = 10
 
-    val horizontalCollision = ball.x in racket.x..(racket.x + RACKET_WIDTH);
-    val verticalCollision = (ball.y + offset) in racket.y..(racket.y + RACKET_HEIGHT);
+    val horizontalCollision = ball.x in racket.x..(racket.x + RACKET_WIDTH)
+    val verticalCollision = (ball.y + offset) in racket.y..(racket.y + RACKET_HEIGHT)
 
     if (horizontalCollision && verticalCollision && ball.deltaY.sign == DIRECTIONS.DOWN.ordinal) {
         println("Colision with Racket")
