@@ -1,15 +1,27 @@
 package org.example
 
 import pt.isel.canvas.*
+import kotlin.math.sign
 
 val WIDTH = 400
 val HEIGHT = 600
 val BACKGROUND_COLOR = BLACK
 
 val CANVAS_INVALID_POS_OFFSET = 10
-
-
 val TIME_TICK_MLS = 10
+
+enum class Collision {
+    HORIZONTAL,
+    VERTICAL,
+    NONE
+}
+
+enum class DIRECTIONS(value: Int) {
+    UP(-1),
+    DOWN(1),
+    LEFT(-1),
+    RIGHT(1)
+}
 
 fun main() {
     val paddle = Racket()
@@ -21,21 +33,20 @@ fun main() {
 
         arena.onTimeProgress(BALL_GENERATOR_PERIOD) {
             val newBalls: List<Ball> = game.balls + generateRandomBall();
-            game = Game(area, newBalls, game.racket)
+            game = game.copy(balls = newBalls)
         }
 
         arena.onTimeProgress(TIME_TICK_MLS) {
             arena.erase()
-            val newBallsUpdated = checkAllBallsPossibleColision(game.balls, game.area)
+            val newBallsUpdated = checkAllBallsPossibleCollision(game.balls, game.area, game.racket)
             val ballsMoved = updateBallsCoords(newBallsUpdated)
-            game = Game(area, ballsMoved, game.racket)
-
+            game = game.copy(balls = ballsMoved)
             drawGame(game)
         }
 
         arena.onMouseMove { me ->
             val racket = newPaddle(me.x)
-            game = Game(area, game.balls, racket)
+            game = game.copy(racket = racket)
         }
 
         print("START")
@@ -47,25 +58,57 @@ fun main() {
     }
 }
 
-fun checkBallColision(ball: Ball, area: Area): Ball {
-    if (ball.x <= 10 || ball.x >= area.width - 10) {
-        //print("colisao lateral")
-        return ball.copy(deltaX = -ball.deltaX)
-    } else if (ball.y <= 10 || ball.y >= area.height - 10) {
-
-        //print("colisao vertical")
-        return ball.copy(deltaY = -ball.deltaY)
+fun checkBallAfterColisionWithArea(ball: Ball, area: Area): Collision {
+    val offset = 10;
+    if (ball.x <= offset || ball.x >= area.width - offset) {
+        return Collision.HORIZONTAL
+    } else if (ball.y <= offset || ball.y >= area.height - offset) {
+        return Collision.VERTICAL
     }
-    return ball
+    return Collision.NONE
 }
 
+fun checkBallCollisionWithRacket(ball: Ball, racket: Racket): Collision {
+    val offset = 10;
+
+    val horizontalCollision = ball.x in racket.x..(racket.x + RACKET_WIDTH);
+    val verticalCollision = (ball.y + offset) in racket.y..(racket.y + RACKET_HEIGHT);
+
+    if (horizontalCollision && verticalCollision && ball.deltaY.sign == DIRECTIONS.DOWN.ordinal) {
+        println("Colision with Racket")
+        return Collision.VERTICAL
+    }
+
+    return Collision.NONE
+}
+
+fun updateBallDeltasAfterColision(ball: Ball, typeCollision: Collision): Ball {
+    return when (typeCollision) {
+        Collision.HORIZONTAL -> ball.copy(deltaX = -ball.deltaX)
+        Collision.VERTICAL -> ball.copy(deltaY = -ball.deltaY)
+        else -> ball
+    }
+}
 
 fun updateBallsCoords(balls: List<Ball>): List<Ball> {
     return balls.map { Ball(it.x + it.deltaX, it.y + it.deltaY, it.deltaX, it.deltaY) }
 }
 
-fun checkAllBallsPossibleColision(balls: List<Ball>, area: Area): List<Ball> {
-    return balls.map { checkBallColision(it, area) }
+fun checkAllBallsPossibleCollision(balls: List<Ball>, area: Area, racket: Racket): List<Ball> {
+    return balls.map { checkAndUpdateBallMovementAfterCollision(it, area, racket) }
+}
+
+fun checkAndUpdateBallMovementAfterCollision(ball: Ball, area: Area, racket: Racket): Ball {
+    val racketCollision = checkBallCollisionWithRacket(ball, racket)
+    val areaCollision = checkBallAfterColisionWithArea(ball, area)
+
+    if (racketCollision != Collision.NONE) {
+        return updateBallDeltasAfterColision(ball, racketCollision)
+    } else if (areaCollision != Collision.NONE) {
+        return updateBallDeltasAfterColision(ball, areaCollision)
+    } else {
+        return ball
+    }
 }
 
 fun drawGame(game: Game) {
