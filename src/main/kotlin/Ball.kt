@@ -25,5 +25,5 @@ fun generateRandomBall(): Ball {
 }
 
 fun drawBalls(ballsList: List<Ball>) {
-    ballsList.forEach { it -> arena.drawCircle(it.x, it.y, BALL_RADIUS, BALL_COLOR) }
+    ballsList.forEach { arena.drawCircle(it.x, it.y, BALL_RADIUS, BALL_COLOR) }
 }

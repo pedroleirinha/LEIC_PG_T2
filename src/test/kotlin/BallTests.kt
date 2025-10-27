@@ -5,7 +5,6 @@ import org.example.MIN_DELTA_Y
 import org.example.WIDTH
 import org.example.generateRandomBall
 import org.junit.jupiter.api.Test
-import kotlin.test.assertFails
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
