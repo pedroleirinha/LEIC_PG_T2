@@ -24,7 +24,7 @@ fun generateRandomBall(): Ball {
     val yDelta = Random.nextInt(MIN_DELTA_Y, MAX_DELTA_Y)
 
 
-    return Ball(xCord, yCord, 0, -yDelta)
+    return Ball(xCord, yCord, xDelta, -yDelta)
 }
 
 fun drawBalls(ballsList: List<Ball>) {
@@ -32,6 +32,6 @@ fun drawBalls(ballsList: List<Ball>) {
 }
 
 fun drawBallsCounter(balls: List<Ball>) {
-    val halfAreaWidth = WIDTH / 2;
+    val halfAreaWidth = WIDTH / 2
     arena.drawText(halfAreaWidth, BALL_COUNTER_YCORD, balls.size.toString(), WHITE, BALL_COUNT_FONTSIZE)
 }

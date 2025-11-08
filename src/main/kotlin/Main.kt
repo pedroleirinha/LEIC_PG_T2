@@ -114,7 +114,7 @@ fun checkBallOutOfBounds(ball: Ball, area: Area): Boolean {
         println("Outofbounds")
         return true
     }
-    return false;
+    return false
 }
 
 fun checkAndUpdateBallMovementAfterCollision(ball: Ball, area: Area, racket: Racket): Ball {
