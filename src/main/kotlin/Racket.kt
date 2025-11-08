@@ -1,8 +1,5 @@
 package org.example
 
-import pt.isel.canvas.RED
-
-
 val RACKET_CENTRAL_ZONE = 40
 val RACKET_EDGE_ZONE = 10
 val RACKET_MIDDLE_ZONE = 15
