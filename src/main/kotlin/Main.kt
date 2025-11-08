@@ -13,6 +13,7 @@ const val TIME_TICK_MLS = 10
 enum class Collision {
     HORIZONTAL,
     VERTICAL,
+    BOTH,
     NONE
 }
 
@@ -46,7 +47,7 @@ fun main() {
         }
 
         arena.onMouseMove { me ->
-            val racket = newPaddle(me.x)
+            val racket = newPaddle(me.x - RACKET_WIDTH / 2)
             game = game.copy(racket = racket)
         }
 
@@ -83,18 +84,27 @@ fun checkBallCollisionWithRacket(ball: Ball, racket: Racket): Collision {
 
     if (horizontalCollision && verticalCollision && ball.deltaY.sign == DIRECTIONS.DOWN.ordinal) {
         println("Colision with Racket")
-        return Collision.VERTICAL
+        return Collision.BOTH
     }
 
     return Collision.NONE
 }
 
-fun updateBallDeltasAfterColision(ball: Ball, typeCollision: Collision): Ball {
-    return when (typeCollision) {
-        Collision.HORIZONTAL -> ball.copy(deltaX = -ball.deltaX)
-        Collision.VERTICAL -> ball.copy(deltaY = -ball.deltaY)
-        else -> ball
+//Checks where in the racket the collision happens to determine the delta change
+fun checkRacketCollisionPosition(ball: Ball, racket: Racket): Int {
+    return when {
+        ball.x <= racket.x + RACKET_EDGE_ZONE -> -RACKET_EDGE_ZONE_DELTA_CHANGE
+        ball.x >= (racket.x + RACKET_WIDTH) - RACKET_EDGE_ZONE -> RACKET_EDGE_ZONE_DELTA_CHANGE
+
+        ball.x <= racket.x + (RACKET_MIDDLE_ZONE + RACKET_EDGE_ZONE) -> -RACKET_MIDDLE_EDGE_ZONE_DELTA_CHANGE
+        ball.x >= (racket.x + RACKET_WIDTH) - (RACKET_MIDDLE_ZONE + RACKET_EDGE_ZONE) -> RACKET_MIDDLE_EDGE_ZONE_DELTA_CHANGE
+
+        else -> ball.deltaX
     }
+}
+
+fun updateBallDeltasAfterColision(ball: Ball, deltaXChange: Int = 1, deltaYChange: Int = 1): Ball {
+    return ball.copy(deltaX = deltaXChange, deltaY = deltaYChange);
 }
 
 fun updateBallsCoords(balls: List<Ball>): List<Ball> {
@@ -121,10 +131,25 @@ fun checkAndUpdateBallMovementAfterCollision(ball: Ball, area: Area, racket: Rac
     val racketCollision = checkBallCollisionWithRacket(ball, racket)
     val areaCollision = checkBallColisionWithArea(ball, area)
 
+
     return if (racketCollision != Collision.NONE) {
-        updateBallDeltasAfterColision(ball, racketCollision)
+        val newDeltaX =
+            if (racketCollision == Collision.BOTH) checkRacketCollisionPosition(ball, racket) else ball.deltaX
+        print("NEW deltaX $newDeltaX")
+        val newDeltaY = if (racketCollision == Collision.BOTH) -ball.deltaY else ball.deltaY
+
+        var newBallDeltaX = ball.deltaX + newDeltaX;
+        if (ball.deltaX + newDeltaX > 4) {
+            newBallDeltaX = 4;
+        } else if (ball.deltaX + newDeltaX < -4) {
+            newBallDeltaX = -4;
+        }
+        updateBallDeltasAfterColision(ball, newBallDeltaX, newDeltaY)
+
     } else if (areaCollision != Collision.NONE) {
-        updateBallDeltasAfterColision(ball, areaCollision)
+        val newDeltaX = if (areaCollision == Collision.HORIZONTAL) -ball.deltaX else ball.deltaX
+        val newDeltaY = if (areaCollision == Collision.VERTICAL) -ball.deltaY else ball.deltaY
+        updateBallDeltasAfterColision(ball, newDeltaX, newDeltaY)
     } else {
         ball
     }

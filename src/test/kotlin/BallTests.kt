@@ -10,10 +10,12 @@ import org.example.WIDTH
 import org.example.checkAndUpdateBallMovementAfterCollision
 import org.example.checkBallColisionWithArea
 import org.example.checkBallCollisionWithRacket
+import org.example.checkRacketCollisionPosition
 import org.example.generateRandomBall
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 class BallTests {
@@ -95,5 +97,39 @@ class BallTests {
 
         assertEquals(newBall3.deltaX, 1)
         assertEquals(newBall3.deltaY, -1)
+    }
+
+    @Test
+    fun testBallDeltaChangeOnRacketCollision() {
+        val racket = Racket(100, 400)
+        val ball = Ball(140, 400, 1, -1)
+
+        var deltaX = checkRacketCollisionPosition(ball, racket)
+        assertEquals(deltaX, 0)
+
+        val ball2 = Ball(105, 400, 1, -1)
+        deltaX = checkRacketCollisionPosition(ball2, racket)
+        assertEquals(deltaX, -3)
+
+        val ball3 = Ball(115, 400, 1, -1)
+        deltaX = checkRacketCollisionPosition(ball3, racket)
+        assertEquals(deltaX, -1)
+
+
+        val ball4 = Ball(185, 400, 1, -1)
+        deltaX = checkRacketCollisionPosition(ball4, racket)
+        assertEquals(deltaX, 3)
+
+        val ball5 = Ball(169, 400, 1, -1)
+        deltaX = checkRacketCollisionPosition(ball5, racket)
+        assertEquals(deltaX, 1)
+
+        val ball6 = Ball(164, 400, 1, -1)
+        deltaX = checkRacketCollisionPosition(ball6, racket)
+        assertNotEquals(deltaX, 1)
+        assertEquals(deltaX, 0)
+
+
+
     }
 }

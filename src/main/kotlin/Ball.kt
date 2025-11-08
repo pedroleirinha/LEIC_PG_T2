@@ -1,14 +1,13 @@
 package org.example
 
-import pt.isel.canvas.BLUE
-import pt.isel.canvas.WHITE
+import pt.isel.canvas.*
 import kotlin.random.Random
 
 
 val BALL_COUNT_FONTSIZE = 30
 val BALL_COUNTER_YCORD = 585
 val BALL_RADIUS = 7
-val BALL_COLOR = BLUE
+val BALL_COLOR = CYAN
 val BALL_GENERATOR_PERIOD = 5000
 val MAX_DELTA_X = 6
 val MAX_DELTA_Y = 4
