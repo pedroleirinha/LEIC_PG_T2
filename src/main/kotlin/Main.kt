@@ -38,9 +38,10 @@ fun main() {
 
         arena.onTimeProgress(TIME_TICK_MLS) {
             arena.erase()
-            val newBallsUpdated = checkAllBallsPossibleCollision(game.balls, game.area, game.racket)
-            val ballsMoved = updateBallsCoords(newBallsUpdated)
-            game = game.copy(balls = ballsMoved)
+
+            val newBallsList = handleGameBallsBehaviour(game)
+            game = game.copy(balls = newBallsList)
+
             drawGame(game)
         }
 
@@ -57,11 +58,18 @@ fun main() {
     }
 }
 
+fun handleGameBallsBehaviour(game: Game): List<Ball> {
+    val filteredBalls = filterBallsOutOfBounds(game.balls, game.area)
+    val newBallsUpdated = checkAllBallsPossibleCollision(filteredBalls, game.area, game.racket)
+    val ballsMoved = updateBallsCoords(newBallsUpdated)
+    return ballsMoved
+}
+
 fun checkBallColisionWithArea(ball: Ball, area: Area): Collision {
     val offset = 10
     if (ball.x <= offset || ball.x >= area.width - offset) {
         return Collision.HORIZONTAL
-    } else if (ball.y <= offset || ball.y >= area.height - offset) {
+    } else if (ball.y <= offset) {
         return Collision.VERTICAL
     }
     return Collision.NONE
@@ -97,6 +105,18 @@ fun checkAllBallsPossibleCollision(balls: List<Ball>, area: Area, racket: Racket
     return balls.map { checkAndUpdateBallMovementAfterCollision(it, area, racket) }
 }
 
+fun filterBallsOutOfBounds(balls: List<Ball>, area: Area): List<Ball> {
+    return balls.filter { !checkBallOutOfBounds(it, area) }
+}
+
+fun checkBallOutOfBounds(ball: Ball, area: Area): Boolean {
+    if (ball.y >= area.height && ball.deltaY.sign == DIRECTIONS.DOWN.ordinal) {
+        println("Outofbounds")
+        return true
+    }
+    return false;
+}
+
 fun checkAndUpdateBallMovementAfterCollision(ball: Ball, area: Area, racket: Racket): Ball {
     val racketCollision = checkBallCollisionWithRacket(ball, racket)
     val areaCollision = checkBallColisionWithArea(ball, area)
@@ -113,4 +133,5 @@ fun checkAndUpdateBallMovementAfterCollision(ball: Ball, area: Area, racket: Rac
 fun drawGame(game: Game) {
     drawPaddle(game.racket)
     drawBalls(game.balls)
+    drawBallsCounter(game.balls)
 }
