@@ -19,15 +19,21 @@ data class Racket(val x: Int = RACKET_X_CORD, val y: Int = RACKET_DEFAULT_Y_CORD
 
 fun drawPaddle(paddle: Racket) {
 
-//    arena.drawImage("man",10,10,80,80)
-
-    arena.drawRect(
-        x = paddle.x,
-        y = paddle.y,
+    arena.drawImage(
+        "arkanoid_racket",
+        xLeft = paddle.x,
+        yTop = paddle.y,
         width = RACKET_WIDTH,
         height = RACKET_HEIGHT,
-        color = RACKET_COLOR
     )
+
+//    arena.drawRect(
+//        x = paddle.x,
+//        y = paddle.y,
+//        width = RACKET_WIDTH,
+//        height = RACKET_HEIGHT,
+//        color = RACKET_COLOR
+//    )
 }
 
 fun newPaddle(xCord: Int, yCord: Int = RACKET_DEFAULT_Y_CORD): Racket {

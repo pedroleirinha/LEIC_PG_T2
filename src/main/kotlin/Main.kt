@@ -51,11 +51,11 @@ fun main() {
             game = game.copy(racket = racket)
         }
 
-        print("START")
+        println("START")
     }
 
     onFinish {
-        print("FINISH")
+        println("FINISH")
     }
 }
 
@@ -83,7 +83,6 @@ fun checkBallCollisionWithRacket(ball: Ball, racket: Racket): Collision {
     val verticalCollision = (ball.y + offset) in racket.y..(racket.y + RACKET_HEIGHT)
 
     if (horizontalCollision && verticalCollision && ball.deltaY.sign == DIRECTIONS.DOWN.ordinal) {
-        println("Colision with Racket")
         return Collision.BOTH
     }
 
@@ -135,18 +134,22 @@ fun checkAndUpdateBallMovementAfterCollision(ball: Ball, area: Area, racket: Rac
     return if (racketCollision != Collision.NONE) {
         val newDeltaX =
             if (racketCollision == Collision.BOTH) checkRacketCollisionPosition(ball, racket) else ball.deltaX
-        print("NEW deltaX $newDeltaX")
+
         val newDeltaY = if (racketCollision == Collision.BOTH) -ball.deltaY else ball.deltaY
 
         var newBallDeltaX = ball.deltaX + newDeltaX
         if (ball.deltaX + newDeltaX > 4) {
-            newBallDeltaX = 4
+            newBallDeltaX = MAX_DELTA_X
         } else if (ball.deltaX + newDeltaX < -4) {
-            newBallDeltaX = -4
+            newBallDeltaX = -MAX_DELTA_X
         }
+
+        println("NEW deltaX $newDeltaX, DELTA after adjustment $newBallDeltaX, BATEU EM ${ball.x - racket.x} ")
+
         updateBallDeltasAfterColision(ball, newBallDeltaX, newDeltaY)
 
     } else if (areaCollision != Collision.NONE) {
+        //TODO erro na deteção da colisao vertical, só deve inverter se o DELTA estiver no sentido errado do suposto.
         val newDeltaX = if (areaCollision == Collision.HORIZONTAL) -ball.deltaX else ball.deltaX
         val newDeltaY = if (areaCollision == Collision.VERTICAL) -ball.deltaY else ball.deltaY
         updateBallDeltasAfterColision(ball, newDeltaX, newDeltaY)
