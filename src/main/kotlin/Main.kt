@@ -104,7 +104,7 @@ fun checkRacketCollisionPosition(ball: Ball, racket: Racket): Int {
 }
 
 fun updateBallDeltasAfterColision(ball: Ball, deltaXChange: Int = 1, deltaYChange: Int = 1): Ball {
-    return ball.copy(deltaX = deltaXChange, deltaY = deltaYChange);
+    return ball.copy(deltaX = deltaXChange, deltaY = deltaYChange)
 }
 
 fun updateBallsCoords(balls: List<Ball>): List<Ball> {
@@ -138,11 +138,11 @@ fun checkAndUpdateBallMovementAfterCollision(ball: Ball, area: Area, racket: Rac
         print("NEW deltaX $newDeltaX")
         val newDeltaY = if (racketCollision == Collision.BOTH) -ball.deltaY else ball.deltaY
 
-        var newBallDeltaX = ball.deltaX + newDeltaX;
+        var newBallDeltaX = ball.deltaX + newDeltaX
         if (ball.deltaX + newDeltaX > 4) {
-            newBallDeltaX = 4;
+            newBallDeltaX = 4
         } else if (ball.deltaX + newDeltaX < -4) {
-            newBallDeltaX = -4;
+            newBallDeltaX = -4
         }
         updateBallDeltasAfterColision(ball, newBallDeltaX, newDeltaY)
 
