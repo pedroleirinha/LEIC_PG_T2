@@ -1,6 +1,7 @@
 package org.example
 
-import pt.isel.canvas.*
+import pt.isel.canvas.CYAN
+import kotlin.math.sign
 import kotlin.random.Random
 
 
@@ -26,11 +27,68 @@ fun generateRandomBall(): Ball {
     return Ball(xCord, yCord, xDelta, -yDelta)
 }
 
-fun drawBalls(ballsList: List<Ball>) {
-    ballsList.forEach { arena.drawCircle(it.x, it.y, BALL_RADIUS, BALL_COLOR) }
+fun Ball.isCollidingWithRacket(racket: Racket): Collision {
+    val horizontalCollision = this.x + BALL_RADIUS in racket.x..(racket.x + RACKET_WIDTH)
+    val verticalCollision = (this.y + BALL_RADIUS) in racket.y..(racket.y + RACKET_HEIGHT)
+
+    return when {
+        horizontalCollision && verticalCollision && this.deltaY.sign == DIRECTIONS.DOWN.ordinal -> Collision.BOTH
+        horizontalCollision -> Collision.HORIZONTAL
+        verticalCollision -> Collision.VERTICAL
+        else -> Collision.NONE
+    }
 }
 
-fun drawBallsCounter(balls: List<Ball>) {
-    val halfAreaWidth = WIDTH / 2
-    arena.drawText(halfAreaWidth, BALL_COUNTER_YCORD, balls.size.toString(), WHITE, BALL_COUNT_FONTSIZE)
+fun Ball.isCollidingWithArea(): Collision {
+    return if (this.x - BALL_RADIUS <= 0 || this.x + BALL_RADIUS >= WIDTH) {
+        Collision.HORIZONTAL
+    } else if (this.y - BALL_RADIUS <= 0) {
+        Collision.VERTICAL
+    } else Collision.NONE
+}
+
+fun Ball.isOutOfBounds(): Boolean {
+    if (this.y >= HEIGHT && this.deltaY.sign == DIRECTIONS.DOWN.ordinal) {
+        println("Outofbounds")
+        return true
+    }
+    return false
+}
+
+fun Ball.updateBallDeltasAfterColision(deltaXChange: Int = 1, deltaYChange: Int = 1): Ball {
+    return this.copy(deltaX = deltaXChange, deltaY = deltaYChange)
+}
+
+fun updateBallAfterCollisionArea(ball: Ball, areaCollision: Collision): Ball {
+    val newDeltaX = if (areaCollision == Collision.HORIZONTAL) -ball.deltaX else ball.deltaX
+    val newDeltaY = if (areaCollision == Collision.VERTICAL) -ball.deltaY else ball.deltaY
+
+    return ball.updateBallDeltasAfterColision(newDeltaX, newDeltaY)
+}
+
+fun updateBallMovementAfterCollision(
+    ball: Ball,
+    racket: Racket,
+    racketCollision: Collision,
+    areaCollision: Collision
+): Ball {
+    return if (racketCollision == Collision.BOTH) {
+        updateBallAfterCollisionRacket(ball, racket)
+    } else if (areaCollision != Collision.NONE) {
+        updateBallAfterCollisionArea(ball, areaCollision)
+    } else {
+        ball
+    }
+}
+
+fun updateBallsCoords(balls: List<Ball>): List<Ball> {
+    return balls.map { Ball(it.x + it.deltaX, it.y + it.deltaY, it.deltaX, it.deltaY) }
+}
+
+fun adjustBallDeltaXAfterColliding(ball: Ball, newDeltaX: Int): Int {
+    return when {
+        ball.deltaX + newDeltaX > MAX_DELTA_X -> MAX_DELTA_X
+        ball.deltaX + newDeltaX < -MAX_DELTA_X -> -MAX_DELTA_X
+        else -> ball.deltaX + newDeltaX
+    }
 }
