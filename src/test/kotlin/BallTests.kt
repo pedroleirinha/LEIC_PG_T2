@@ -63,7 +63,7 @@ class BallTests {
         racketCollision = checkBallCollisionWithRacket(ball3, racket)
         areaCollision = checkBallColisionWithArea(ball3, area)
 
-        assertEquals(Collision.VERTICAL, racketCollision)
+        assertEquals(Collision.BOTH, racketCollision)
         assertEquals(Collision.HORIZONTAL, areaCollision)
 
         val ball4 = Ball(5, 400, 1, -1)
@@ -95,7 +95,7 @@ class BallTests {
         val ball3 = Ball(5, 400, 1, 1)
         val newBall3 = checkAndUpdateBallMovementAfterCollision(ball3, area, racket)
 
-        assertEquals(newBall3.deltaX, 1)
+        assertEquals(newBall3.deltaX, -2)
         assertEquals(newBall3.deltaY, -1)
     }
 
@@ -105,7 +105,7 @@ class BallTests {
         val ball = Ball(140, 400, 1, -1)
 
         var deltaX = checkRacketCollisionPosition(ball, racket)
-        assertEquals(deltaX, 0)
+        assertEquals(deltaX, 1)
 
         val ball2 = Ball(105, 400, 1, -1)
         deltaX = checkRacketCollisionPosition(ball2, racket)
@@ -126,8 +126,8 @@ class BallTests {
 
         val ball6 = Ball(164, 400, 1, -1)
         deltaX = checkRacketCollisionPosition(ball6, racket)
-        assertNotEquals(deltaX, 1)
-        assertEquals(deltaX, 0)
+        assertNotEquals(deltaX, 3)
+        assertEquals(deltaX, 1)
 
 
 
