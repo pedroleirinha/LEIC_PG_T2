@@ -50,4 +50,5 @@ fun checkRacketCollisionPosition(ball: Ball, racket: Racket) = when {
     else -> 0
 }
 
+fun Racket.moveTo(to: Int) = newPaddle(to - RACKET_WIDTH / 2)
 
