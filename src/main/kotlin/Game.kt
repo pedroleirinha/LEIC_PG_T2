@@ -39,13 +39,11 @@ fun handleGameBallsBehaviour(game: Game): List<Ball> {
     return ballsMoved
 }
 
-fun checkAllBallsPossibleCollision(balls: List<Ball>, racket: Racket): List<Ball> {
-    return balls.map { checkAndUpdateBallMovementAfterCollision(it, racket) }
-}
+fun checkAllBallsPossibleCollision(balls: List<Ball>, racket: Racket) =
+    balls.map { checkAndUpdateBallMovementAfterCollision(it, racket) }
 
-fun filterBallsOutOfBounds(balls: List<Ball>): List<Ball> {
-    return balls.filter { !it.isOutOfBounds() }
-}
+
+fun filterBallsOutOfBounds(balls: List<Ball>) = balls.filter { !it.isOutOfBounds() }
 
 fun updateBallAfterCollisionRacket(ball: Ball, racket: Racket): Ball {
     val newDeltaX = checkRacketCollisionPosition(ball, racket)
@@ -77,8 +75,7 @@ fun gameStart() {
     var game = Game(area, emptyList(), paddle)
 
     arena.onTimeProgress(BALL_GENERATOR_PERIOD) {
-        val newBalls: List<Ball> = game.balls + generateRandomBall()
-        game = game.copy(balls = newBalls)
+        game = game.copy(balls = game.balls + generateRandomBall())
     }
 
     arena.onTimeProgress(TIME_TICK_MLS) {
@@ -105,6 +102,5 @@ fun drawBalls(ballsList: List<Ball>) {
 }
 
 fun drawBallsCounter(balls: List<Ball>) {
-    val halfAreaWidth = WIDTH / 2
-    arena.drawText(halfAreaWidth, BALL_COUNTER_YCORD, balls.size.toString(), WHITE, BALL_COUNT_FONTSIZE)
+    arena.drawText(WIDTH / 2, BALL_COUNTER_YCORD, balls.size.toString(), WHITE, BALL_COUNT_FONTSIZE)
 }

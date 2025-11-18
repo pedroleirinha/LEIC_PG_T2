@@ -1,16 +1,17 @@
 package org.example
 
-val RACKET_CENTRAL_ZONE = 40
-val RACKET_EDGE_ZONE = 10
-val RACKET_MIDDLE_ZONE = 15
-val RACKET_EDGE_ZONE_DELTA_CHANGE = 3
-val RACKET_MIDDLE_EDGE_ZONE_DELTA_CHANGE = 1
-val RACKET_WIDTH = RACKET_CENTRAL_ZONE + RACKET_MIDDLE_ZONE * 2 + RACKET_EDGE_ZONE * 2
-val RACKET_HEIGHT = 10
+const val RACKET_CENTRAL_ZONE = 40
+const val RACKET_EDGE_ZONE = 10
+const val RACKET_MIDDLE_ZONE = 15
+const val RACKET_EDGE_ZONE_DELTA_CHANGE = 3
+const val RACKET_MIDDLE_EDGE_ZONE_DELTA_CHANGE = 1
+const val RACKET_WIDTH = RACKET_CENTRAL_ZONE + RACKET_MIDDLE_ZONE * 2 + RACKET_EDGE_ZONE * 2
+const val RACKET_HEIGHT = 10
+
 //val RACKET_COLOR = RED
-val RACKET_DEFAULT_Y_CORD = 540
-val RACKET_STARTING_POS_X = (WIDTH / 2) - (RACKET_WIDTH / 2)
-val RACKET_X_CORD = RACKET_STARTING_POS_X
+const val RACKET_DEFAULT_Y_CORD = 540
+const val RACKET_STARTING_POS_X = (WIDTH / 2) - (RACKET_WIDTH / 2)
+const val RACKET_X_CORD = RACKET_STARTING_POS_X
 
 data class Racket(val x: Int = RACKET_X_CORD, val y: Int = RACKET_DEFAULT_Y_CORD)
 
@@ -39,15 +40,14 @@ fun newPaddle(xCord: Int, yCord: Int = RACKET_DEFAULT_Y_CORD): Racket {
 }
 
 //Checks where in the racket the collision happens to determine the delta change
-fun checkRacketCollisionPosition(ball: Ball, racket: Racket): Int {
-    return when {
-        ball.x <= racket.x + RACKET_EDGE_ZONE -> -RACKET_EDGE_ZONE_DELTA_CHANGE
-        ball.x >= (racket.x + RACKET_WIDTH) - RACKET_EDGE_ZONE -> RACKET_EDGE_ZONE_DELTA_CHANGE
+fun checkRacketCollisionPosition(ball: Ball, racket: Racket) = when {
+    ball.x <= racket.x + RACKET_EDGE_ZONE -> -RACKET_EDGE_ZONE_DELTA_CHANGE
+    ball.x >= (racket.x + RACKET_WIDTH) - RACKET_EDGE_ZONE -> RACKET_EDGE_ZONE_DELTA_CHANGE
 
-        ball.x <= racket.x + (RACKET_MIDDLE_ZONE + RACKET_EDGE_ZONE) -> -RACKET_MIDDLE_EDGE_ZONE_DELTA_CHANGE
-        ball.x >= (racket.x + RACKET_WIDTH) - (RACKET_MIDDLE_ZONE + RACKET_EDGE_ZONE) -> RACKET_MIDDLE_EDGE_ZONE_DELTA_CHANGE
+    ball.x <= racket.x + (RACKET_MIDDLE_ZONE + RACKET_EDGE_ZONE) -> -RACKET_MIDDLE_EDGE_ZONE_DELTA_CHANGE
+    ball.x >= (racket.x + RACKET_WIDTH) - (RACKET_MIDDLE_ZONE + RACKET_EDGE_ZONE) -> RACKET_MIDDLE_EDGE_ZONE_DELTA_CHANGE
 
-        else -> 0
-    }
+    else -> 0
 }
+
 
