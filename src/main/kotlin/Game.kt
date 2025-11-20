@@ -19,34 +19,34 @@ enum class Collision {
     NONE
 }
 
-enum class DIRECTIONS(value: Int) {
-    UP(-1),
-    DOWN(1),
-    LEFT(-1),
-    RIGHT(1)
+enum class DIRECTIONS(val value: Int) {
+    DOWN(value = 1),
 }
 
 val arena = Canvas(WIDTH, HEIGHT, BACKGROUND_COLOR)
 
-data class Area(val width: Int, val height: Int)
-data class Game(val area: Area, val balls: List<Ball> = emptyList(), val racket: Racket)
+data class Area(val width: Int = WIDTH, val height: Int = HEIGHT)
+data class Game(
+    val area: Area = Area(),
+    val balls: List<Ball> = emptyList(),
+    val racket: Racket = Racket()
+)
 
 fun gameStart() {
-    val area = Area(WIDTH, HEIGHT)
-    var game = Game(area = area, racket = Racket())
+    var game = Game()
 
-    arena.onTimeProgress(BALL_GENERATOR_PERIOD) {
+    arena.onTimeProgress(period = BALL_GENERATOR_PERIOD) {
         game = game.copy(balls = game.balls + generateRandomBall())
     }
 
-    arena.onTimeProgress(TIME_TICK_MLS) {
+    arena.onTimeProgress(period = TIME_TICK_MLS) {
         arena.erase()
-        game = game.copy(balls = handleGameBallsBehaviour(game))
+        game = game.copy(balls = handleGameBallsBehaviour(balls = game.balls, racket = game.racket))
         drawGame(game)
     }
 
     arena.onMouseMove { me ->
-        game = game.copy(racket = game.racket.moveTo(me.x - RACKET_WIDTH / 2))
+        game = game.copy(racket = game.racket.moveTo(to = me.x - RACKET_WIDTH / 2))
     }
 
     arena.onKeyPressed {
@@ -55,35 +55,46 @@ fun gameStart() {
 }
 
 fun drawBalls(ballsList: List<Ball>) {
-    ballsList.forEach { arena.drawCircle(it.x, it.y, BALL_RADIUS, BALL_COLOR) }
+    ballsList.forEach { arena.drawCircle(xCenter = it.x, yCenter = it.y, radius = BALL_RADIUS, color = BALL_COLOR) }
 }
 
 fun drawBallsCounter(balls: List<Ball>) {
-    arena.drawText(WIDTH / 2, BALL_COUNTER_YCORD, balls.size.toString(), WHITE, BALL_COUNT_FONTSIZE)
+    arena.drawText(
+        x = WIDTH / 2,
+        y = BALL_COUNTER_YCORD,
+        txt = balls.size.toString(),
+        color = WHITE,
+        fontSize = BALL_COUNT_FONTSIZE
+    )
 }
 
-fun handleGameBallsBehaviour(game: Game): List<Ball> {
-    val filteredBalls = filterBallsOutOfBounds(game.balls)
-    val newBallsUpdated = checkAllBallsPossibleCollision(filteredBalls, game.racket)
-    val ballsMoved = updateBallsCoords(newBallsUpdated)
+fun handleGameBallsBehaviour(balls: List<Ball>, racket: Racket): List<Ball> {
+    val filteredBalls = filterBallsOutOfBounds(balls = balls)
+    val newBallsUpdated = checkAllBallsPossibleCollision(balls = filteredBalls, racket = racket)
+    val ballsMoved = updateBallsMovement(balls = newBallsUpdated)
     return ballsMoved
 }
 
 fun checkAllBallsPossibleCollision(balls: List<Ball>, racket: Racket) =
-    balls.map { checkAndUpdateBallMovementAfterCollision(it, racket) }
+    balls.map { checkAndUpdateBallMovementAfterCollision(ball = it, racket = racket) }
 
 
 fun filterBallsOutOfBounds(balls: List<Ball>) = balls.filter { !it.isOutOfBounds() }
 
 fun checkAndUpdateBallMovementAfterCollision(ball: Ball, racket: Racket): Ball {
-    val racketCollision = ball.isCollidingWithRacket(racket)
+    val racketCollision = ball.isCollidingWithRacket(racket = racket)
     val areaCollision = ball.isCollidingWithArea()
-
-    return updateBallMovementAfterCollision(ball, racket, racketCollision, areaCollision)
+    println();
+    return updateBallMovementAfterCollision(
+        ball = ball,
+        racket = racket,
+        racketCollision = racketCollision,
+        areaCollision = areaCollision
+    )
 }
 
 fun drawGame(game: Game) {
-    drawPaddle(game.racket)
-    drawBalls(game.balls)
-    drawBallsCounter(game.balls)
+    drawRacket(racket = game.racket)
+    drawBalls(ballsList = game.balls)
+    drawBallsCounter(balls = game.balls)
 }

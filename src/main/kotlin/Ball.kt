@@ -17,14 +17,14 @@ const val MIN_DELTA_Y = 1
 data class Ball(val x: Int = 0, val y: Int = 0, val deltaX: Int = 0, val deltaY: Int = 0)
 
 fun generateRandomBall(): Ball {
-    val xCord = Random.nextInt(CANVAS_INVALID_POS_OFFSET, WIDTH - CANVAS_INVALID_POS_OFFSET)
+    val xCord = Random.nextInt(from = CANVAS_INVALID_POS_OFFSET, until = WIDTH - CANVAS_INVALID_POS_OFFSET)
     val yCord = HEIGHT - 30
 
-    val xDelta = Random.nextInt(MAX_DELTA_X)
-    val yDelta = Random.nextInt(MIN_DELTA_Y, MAX_DELTA_Y)
+    val xDelta = Random.nextInt(until = MAX_DELTA_X)
+    val yDelta = Random.nextInt(from = MIN_DELTA_Y, until = MAX_DELTA_Y)
 
 
-    return Ball(xCord, yCord, xDelta, -yDelta)
+    return Ball(x = xCord, y = yCord, deltaX = xDelta, deltaY = -yDelta)
 }
 
 fun Ball.isCollidingWithRacket(racket: Racket): Collision {
@@ -56,14 +56,14 @@ fun Ball.adjustDirectionAfterColliding(newDeltaX: Int) = when {
 
 fun Ball.isOutOfBounds() = this.y >= HEIGHT && this.deltaY.sign == DIRECTIONS.DOWN.ordinal
 
-fun Ball.updateBallDeltasAfterColision(deltaXChange: Int = 1, deltaYChange: Int = 1) =
+fun Ball.updateBallDeltasAfterCollision(deltaXChange: Int = 1, deltaYChange: Int = 1) =
     this.copy(deltaX = deltaXChange, deltaY = deltaYChange)
 
 fun updateBallAfterCollisionArea(ball: Ball, areaCollision: Collision): Ball {
     val newDeltaX = if (areaCollision == Collision.HORIZONTAL) -ball.deltaX else ball.deltaX
     val newDeltaY = if (areaCollision == Collision.VERTICAL) -ball.deltaY else ball.deltaY
 
-    return ball.updateBallDeltasAfterColision(newDeltaX, newDeltaY)
+    return ball.updateBallDeltasAfterCollision(deltaXChange = newDeltaX, deltaYChange = newDeltaY)
 }
 
 fun updateBallAfterCollisionRacket(ball: Ball, racket: Racket): Ball {
@@ -74,7 +74,7 @@ fun updateBallAfterCollisionRacket(ball: Ball, racket: Racket): Ball {
 
     println("Ball DeltaX ${ball.deltaX} - NEW deltaX $newDeltaX, DELTA after adjustment $newBallDeltaX, BATEU EM ${ball.x - racket.x} ")
 
-    return ball.updateBallDeltasAfterColision(newBallDeltaX, newDeltaY)
+    return ball.updateBallDeltasAfterCollision(deltaXChange = newBallDeltaX, deltaYChange = newDeltaY)
 }
 
 fun updateBallMovementAfterCollision(
@@ -86,5 +86,5 @@ fun updateBallMovementAfterCollision(
 }
 
 
-fun updateBallsCoords(balls: List<Ball>) = balls.map { it.move() }
+fun updateBallsMovement(balls: List<Ball>) = balls.map { it.move() }
 

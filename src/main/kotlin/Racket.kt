@@ -12,15 +12,16 @@ const val RACKET_HEIGHT = 10
 const val RACKET_DEFAULT_Y_CORD = 540
 const val RACKET_STARTING_POS_X = (WIDTH / 2) - (RACKET_WIDTH / 2)
 const val RACKET_X_CORD = RACKET_STARTING_POS_X
+const val RACKET_IMAGE_FILENAME = "arkanoid_racket"
 
 data class Racket(val x: Int = RACKET_X_CORD, val y: Int = RACKET_DEFAULT_Y_CORD)
 
-fun drawPaddle(paddle: Racket) {
+fun drawRacket(racket: Racket) {
 
     arena.drawImage(
-        "arkanoid_racket",
-        xLeft = paddle.x,
-        yTop = paddle.y,
+        fileName = RACKET_IMAGE_FILENAME,
+        xLeft = racket.x,
+        yTop = racket.y,
         width = RACKET_WIDTH,
         height = RACKET_HEIGHT,
     )
@@ -34,10 +35,12 @@ fun drawPaddle(paddle: Racket) {
 //    )
 }
 
-fun newPaddle(xCord: Int, yCord: Int = RACKET_DEFAULT_Y_CORD): Racket {
+fun Racket.newPaddle(xCord: Int, yCord: Int = RACKET_DEFAULT_Y_CORD): Racket {
     val racketXCordCorrected = if (xCord + RACKET_WIDTH <= WIDTH) xCord else WIDTH - RACKET_WIDTH
-    return Racket(racketXCordCorrected, yCord)
+    return copy(x = racketXCordCorrected, y = yCord)
 }
+
+fun Racket.moveTo(to: Int) = this.newPaddle(xCord = to - RACKET_WIDTH / 2)
 
 //Checks where in the racket the collision happens to determine the delta change
 fun checkRacketCollisionPosition(ball: Ball, racket: Racket) = when {
@@ -50,5 +53,4 @@ fun checkRacketCollisionPosition(ball: Ball, racket: Racket) = when {
     else -> 0
 }
 
-fun Racket.moveTo(to: Int) = newPaddle(to - RACKET_WIDTH / 2)
 
