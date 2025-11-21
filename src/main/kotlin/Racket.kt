@@ -1,5 +1,7 @@
 package org.example
 
+import pt.isel.canvas.RED
+
 const val RACKET_CENTRAL_ZONE = 40
 const val RACKET_EDGE_ZONE = 10
 const val RACKET_MIDDLE_ZONE = 15
@@ -8,7 +10,7 @@ const val RACKET_MIDDLE_EDGE_ZONE_DELTA_CHANGE = 1
 const val RACKET_WIDTH = RACKET_CENTRAL_ZONE + RACKET_MIDDLE_ZONE * 2 + RACKET_EDGE_ZONE * 2
 const val RACKET_HEIGHT = 10
 
-//val RACKET_COLOR = RED
+val RACKET_COLOR = RED
 const val RACKET_DEFAULT_Y_CORD = 540
 const val RACKET_STARTING_POS_X = (WIDTH / 2) - (RACKET_WIDTH / 2)
 const val RACKET_X_CORD = RACKET_STARTING_POS_X
@@ -17,26 +19,21 @@ const val RACKET_IMAGE_FILENAME = "arkanoid_racket"
 data class Racket(val x: Int = RACKET_X_CORD, val y: Int = RACKET_DEFAULT_Y_CORD)
 
 fun drawRacket(racket: Racket) {
-
-    arena.drawImage(
-        fileName = RACKET_IMAGE_FILENAME,
-        xLeft = racket.x,
-        yTop = racket.y,
+    arena.drawRect(
+        x = racket.x,
+        y = racket.y,
         width = RACKET_WIDTH,
         height = RACKET_HEIGHT,
+        color = RACKET_COLOR
     )
-
-//    arena.drawRect(
-//        x = paddle.x,
-//        y = paddle.y,
-//        width = RACKET_WIDTH,
-//        height = RACKET_HEIGHT,
-//        color = RACKET_COLOR
-//    )
 }
 
 fun Racket.newPaddle(xCord: Int, yCord: Int = RACKET_DEFAULT_Y_CORD): Racket {
-    val racketXCordCorrected = if (xCord + RACKET_WIDTH <= WIDTH) xCord else WIDTH - RACKET_WIDTH
+    val racketXCordCorrected = when {
+        xCord + RACKET_WIDTH > WIDTH -> WIDTH - RACKET_WIDTH
+        xCord <= 0 -> 0
+        else -> xCord
+    }
     return copy(x = racketXCordCorrected, y = yCord)
 }
 

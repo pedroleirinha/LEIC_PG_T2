@@ -21,6 +21,7 @@ enum class Collision {
 
 enum class DIRECTIONS(val value: Int) {
     DOWN(value = 1),
+    UP(value = -1),
 }
 
 val arena = Canvas(WIDTH, HEIGHT, BACKGROUND_COLOR)
@@ -41,12 +42,14 @@ fun gameStart() {
 
     arena.onTimeProgress(period = TIME_TICK_MLS) {
         arena.erase()
-        game = game.copy(balls = handleGameBallsBehaviour(balls = game.balls, racket = game.racket))
+        val updatedBalls = handleGameBallsBehaviour(balls = game.balls, racket = game.racket)
+        if (!game.balls.isEmpty() && updatedBalls.isEmpty()) arena.close()
+        game = game.copy(balls = updatedBalls)
         drawGame(game)
     }
 
     arena.onMouseMove { me ->
-        game = game.copy(racket = game.racket.moveTo(to = me.x - RACKET_WIDTH / 2))
+        game = game.copy(racket = game.racket.moveTo(to = me.x))
     }
 
     arena.onKeyPressed {
@@ -81,17 +84,13 @@ fun checkAllBallsPossibleCollision(balls: List<Ball>, racket: Racket) =
 
 fun filterBallsOutOfBounds(balls: List<Ball>) = balls.filter { !it.isOutOfBounds() }
 
-fun checkAndUpdateBallMovementAfterCollision(ball: Ball, racket: Racket): Ball {
-    val racketCollision = ball.isCollidingWithRacket(racket = racket)
-    val areaCollision = ball.isCollidingWithArea()
-    println();
-    return updateBallMovementAfterCollision(
+fun checkAndUpdateBallMovementAfterCollision(ball: Ball, racket: Racket) =
+    updateBallMovementAfterCollision(
         ball = ball,
         racket = racket,
-        racketCollision = racketCollision,
-        areaCollision = areaCollision
+        racketCollision = ball.isCollidingWithRacket(racket = racket),
+        areaCollision = ball.isCollidingWithArea()
     )
-}
 
 fun drawGame(game: Game) {
     drawRacket(racket = game.racket)

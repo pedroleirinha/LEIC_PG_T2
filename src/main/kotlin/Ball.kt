@@ -20,19 +20,25 @@ fun generateRandomBall(): Ball {
     val xCord = Random.nextInt(from = CANVAS_INVALID_POS_OFFSET, until = WIDTH - CANVAS_INVALID_POS_OFFSET)
     val yCord = HEIGHT - 30
 
-    val xDelta = Random.nextInt(until = MAX_DELTA_X)
+    val xDelta = Random.nextInt(from = -MAX_DELTA_X, until = MAX_DELTA_X)
     val yDelta = Random.nextInt(from = MIN_DELTA_Y, until = MAX_DELTA_Y)
 
 
-    return Ball(x = xCord, y = yCord, deltaX = xDelta, deltaY = -yDelta)
+    return Ball(x = xCord, y = 5, deltaX = xDelta, deltaY = -yDelta)
 }
 
+/*
+* Deteta se ha colisão com a rackete retorna um enumerado de acordo com a colisão detetada
+* */
 fun Ball.isCollidingWithRacket(racket: Racket): Collision {
-    val horizontalCollision = this.x + BALL_RADIUS in racket.x..(racket.x + RACKET_WIDTH)
+    val horizontalCollision = (
+            this.x + BALL_RADIUS in racket.x..(racket.x + RACKET_WIDTH) ||
+                    this.x - BALL_RADIUS in racket.x..(racket.x + RACKET_WIDTH)
+            )
     val verticalCollision = (this.y + BALL_RADIUS) in racket.y..(racket.y + RACKET_HEIGHT)
 
     return when {
-        horizontalCollision && verticalCollision && this.deltaY.sign == DIRECTIONS.DOWN.ordinal -> Collision.BOTH
+        horizontalCollision && verticalCollision && this.deltaY.sign == DIRECTIONS.DOWN.value -> Collision.BOTH
         horizontalCollision -> Collision.HORIZONTAL
         verticalCollision -> Collision.VERTICAL
         else -> Collision.NONE
@@ -44,7 +50,7 @@ fun Ball.move() =
 
 fun Ball.isCollidingWithArea() = when {
     this.x - BALL_RADIUS <= 0 || this.x + BALL_RADIUS >= WIDTH -> Collision.HORIZONTAL
-    this.y - BALL_RADIUS <= 0 -> Collision.VERTICAL
+    this.y - BALL_RADIUS <= 0 && this.deltaY.sign == DIRECTIONS.UP.value -> Collision.VERTICAL
     else -> Collision.NONE
 }
 
@@ -54,7 +60,7 @@ fun Ball.adjustDirectionAfterColliding(newDeltaX: Int) = when {
     else -> this.deltaX + newDeltaX
 }
 
-fun Ball.isOutOfBounds() = this.y >= HEIGHT && this.deltaY.sign == DIRECTIONS.DOWN.ordinal
+fun Ball.isOutOfBounds() = this.y >= HEIGHT && this.deltaY.sign == DIRECTIONS.DOWN.value
 
 fun Ball.updateBallDeltasAfterCollision(deltaXChange: Int = 1, deltaYChange: Int = 1) =
     this.copy(deltaX = deltaXChange, deltaY = deltaYChange)

@@ -67,6 +67,15 @@ class BallTests {
     }
 
     @Test
+    fun testBallCollisionOnRacketEdge() {
+        val racket = Racket(310, RACKET_DEFAULT_Y_CORD)
+        val ball = Ball(x = 389, y = RACKET_DEFAULT_Y_CORD, deltaX = 0, deltaY = 1)
+
+        val collision = ball.isCollidingWithRacket(racket);
+        assertEquals(Collision.BOTH, collision)
+    }
+
+    @Test
     fun testBallDeltaChangeAfterCollisions() {
         val racket = Racket(0, 400)
 
