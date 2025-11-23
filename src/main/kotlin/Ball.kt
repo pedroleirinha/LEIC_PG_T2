@@ -99,7 +99,7 @@ fun updateBallAfterCollisionRacket(ball: Ball, racket: Racket): Ball {
 
     println("Ball DeltaX ${ball.deltaX} - NEW deltaX $newDeltaX, DELTA after adjustment $newBallDeltaX, BATEU EM ${ball.x - racket.x} ")
 
-    return ball.copy(deltaX = newDeltaX, deltaY = newDeltaY)
+    return ball.copy(deltaX = newBallDeltaX, deltaY = newDeltaY)
 }
 
 /*
