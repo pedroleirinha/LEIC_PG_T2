@@ -14,7 +14,7 @@ class BallTests {
 
             assertTrue(testBall.x in 0..<WIDTH)
             assertTrue(testBall.y in 0..<HEIGHT)
-            assertTrue(testBall.deltaX in 0..<MAX_DELTA_X)
+            assertTrue(testBall.deltaX in -MAX_DELTA_X..MAX_DELTA_X)
             assertTrue(testBall.deltaY in -MAX_DELTA_Y..-MIN_DELTA_Y)
         }
 

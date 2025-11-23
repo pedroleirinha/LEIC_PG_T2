@@ -18,20 +18,17 @@ enum class Collision {
     BOTH,
     NONE
 }
-
 enum class DIRECTIONS(val value: Int) {
     DOWN(value = 1),
     UP(value = -1),
 }
-
-val arena = Canvas(WIDTH, HEIGHT, BACKGROUND_COLOR)
-
 data class Area(val width: Int = WIDTH, val height: Int = HEIGHT)
 data class Game(
     val area: Area = Area(),
     val balls: List<Ball> = emptyList(),
     val racket: Racket = Racket()
 )
+val arena = Canvas(WIDTH, HEIGHT, BACKGROUND_COLOR)
 
 fun gameStart() {
     var game = Game()
@@ -57,10 +54,15 @@ fun gameStart() {
     }
 }
 
+/*
+* Desenha as bolas em jogo no canvas
+* */
 fun drawBalls(ballsList: List<Ball>) {
     ballsList.forEach { arena.drawCircle(xCenter = it.x, yCenter = it.y, radius = BALL_RADIUS, color = BALL_COLOR) }
 }
 
+/*
+* Desenha no canvas o número de bolas em jogo no momento*/
 fun drawBallsCounter(balls: List<Ball>) {
     arena.drawText(
         x = WIDTH / 2,
@@ -71,19 +73,24 @@ fun drawBallsCounter(balls: List<Ball>) {
     )
 }
 
+/*
+* A cada step do jogo, remove as bolas fora de jogo, verifica as colisões e atualiza os movimentos das bolas para serem desenhadas novamente.
+* */
 fun handleGameBallsBehaviour(balls: List<Ball>, racket: Racket): List<Ball> {
     val filteredBalls = filterBallsOutOfBounds(balls = balls)
-    val newBallsUpdated = checkAllBallsPossibleCollision(balls = filteredBalls, racket = racket)
+    val newBallsUpdated = filteredBalls.map { checkAndUpdateBallMovementAfterCollision(ball = it, racket = racket) }
     val ballsMoved = updateBallsMovement(balls = newBallsUpdated)
     return ballsMoved
 }
 
-fun checkAllBallsPossibleCollision(balls: List<Ball>, racket: Racket) =
-    balls.map { checkAndUpdateBallMovementAfterCollision(ball = it, racket = racket) }
-
-
+/*
+* Filtra a lista de bolas de jogo removendo as que estão fora dos limites de jogo
+* */
 fun filterBallsOutOfBounds(balls: List<Ball>) = balls.filter { !it.isOutOfBounds() }
 
+/*
+* Verifica a colisão de cada bola e atualiza a velocidade e movimento de cada uma
+* */
 fun checkAndUpdateBallMovementAfterCollision(ball: Ball, racket: Racket) =
     updateBallMovementAfterCollision(
         ball = ball,
@@ -92,6 +99,9 @@ fun checkAndUpdateBallMovementAfterCollision(ball: Ball, racket: Racket) =
         areaCollision = ball.isCollidingWithArea()
     )
 
+/*
+* Desenha o jogo no canvas, que inclui desenhar a raquete, bolas e o contador de bolas em jogo
+* */
 fun drawGame(game: Game) {
     drawRacket(racket = game.racket)
     drawBalls(ballsList = game.balls)
