@@ -22,7 +22,7 @@ data class Ball(val x: Int = 0, val y: Int = 0, val deltaX: Int = 0, val deltaY:
 * */
 fun generateRandomBall(): Ball {
     val xCord = Random.nextInt(from = CANVAS_INVALID_POS_OFFSET, until = WIDTH - CANVAS_INVALID_POS_OFFSET)
-    val yCord = HEIGHT - 30
+    val yCord = HEIGHT
 
     val xDelta = Random.nextInt(from = -MAX_DELTA_X, until = MAX_DELTA_X)
     val yDelta = Random.nextInt(from = MIN_DELTA_Y, until = MAX_DELTA_Y)
@@ -52,8 +52,7 @@ fun Ball.isCollidingWithRacket(racket: Racket): Collision {
 /*
 * Cria uma bola fazendo uma cópia e atualizando apenas as coords
 * */
-fun Ball.move() =
-    copy(x = this.x + this.deltaX, y = this.y + deltaY)
+fun Ball.move() = copy(x = this.x + this.deltaX, y = this.y + deltaY)
 
 /*
 * Verifica se uma bola está em colisão com a arena, tanto na horizontal e vertical

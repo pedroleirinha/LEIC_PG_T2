@@ -40,6 +40,7 @@ fun gameStart() {
     arena.onTimeProgress(period = TIME_TICK_MLS) {
         arena.erase()
         val updatedBalls = handleGameBallsBehaviour(balls = game.balls, racket = game.racket)
+
         if (!game.balls.isEmpty() && updatedBalls.isEmpty()) arena.close()
         game = game.copy(balls = updatedBalls)
         drawGame(game)
